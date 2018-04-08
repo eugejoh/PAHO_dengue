@@ -1,4 +1,4 @@
-# Dengue PAHO Data
+# PAHO Dengue Data Exploration
 
 This repository is for the personal exploration of Pan American Health Organization (PAHO) data on dengue in the Americas.
 
