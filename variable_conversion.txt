@@ -1,0 +1,26 @@
+Case Fatality Rate (Percent), Case Fatality Rate Percent
+Code, Code
+Country, Country
+Casos de dengue, Cases
+Muretes, Deaths
+Pais o territorio, Location
+Tipo, Type
+Year (vwPopulation per year), Yearvw
+Year, Year
+
+Mortality rate per 100000 pop	
+CountryISO vwPopulation per year
+Country ISO
+Country
+Dengue Tot
+Dengue
+Dgrave
+Deaths
+Number of Records
+Pais
+PopFemale vwPopulation per year
+PopMale vwPopulation per year
+Population
+Tipo
+Year vwPopulation per year
+Year

@@ -1,5 +1,5 @@
 ---
-title: "Explor PAHO Data: Dengue"
+title: "Explore PAHO Data: Dengue"
 author: "Eugene Joh, MPH"
 date: "April 8, 2018"
 output: 
@@ -35,17 +35,63 @@ rm(new.packages,list.of.packages)
 ```
 
 # Introduction
+What is PAHO? Which regions do they cover? What is their mandate? What are they responsible for?
+
+What is dengue? What is the vector? How is it transmitted? Who does it affect? What is the burden of dengue?
+
+Why does PAHO have data on dengue? What are reportable diseases? Why is dengue a reportable disease? 
+
+Terminology and Definitions:
+What is a case? What is a fatality? What is incidence/prevalence/mortality? What is an epidemological week?
 
 # Data 
+What do these data files contain?
+What relevant information do we want to look at?
 
 ## Import
+downloaded flat-files named with tailing 'INIT', all deconstructed 
+```{r data_import, echo=TRUE}
+# Data Import ####
+list.files(here('data'),pattern = "\\.csv$") #show all .csv files in /data folder
+list.files(here('data'), pattern = 'INIT\\.csv$') #show all downloaded files in /data folder
+
+# data import issues due to multibyte .csv encoding (UTF-16), the downloaded .csv were manually converted to singlebyte format
+list.files(here('data'), pattern = 'FINAL\\.csv$') #show all modified files (due to multi-byte data import issues) in /data folder
+
+# import 'FINAL' files into list ###
+d.list <- lapply(seq_along(list.files(here('data'),pattern = 'FINAL\\.csv$')),
+                    function(i) { #use readr read_csv()
+                      readr::read_csv(here('data',list.files(here('data'),pattern = 'FINAL\\.csv$')[i]))
+                    })
+# add names to list import
+names(d.list) <- list.files(here('data'), pattern = 'FINAL\\.csv$')
+```
+
+```{r epiweek_merge}
+# merge the Epi Week data files (1-51 and 52) together
+glimpse(d.list$`Epi_week_1-51_FINAL.csv`)
+glimpse(d.list$Epi_week_52_FINAL.csv)
+# check column names first
+identical(names(d.list[[3]]),names(d.list[[4]])) #column names are the same
+
+# merge the data together by usingbase::rbind()
+d_epiwk <- rbind(d.list[[3]],d.list[[4]])
+```
+
+```{r mort_fatality}
+# assign names for mortality and case fatality
+d_mort <- d.list[[1]] #mortality data
+d_fat <- d.list[[2]] #case fatality data
+```
 
 ## Processing
+conversion of object classes, any cleaning/processing steps
 
 # Exploration
+reporting descriptives (counts, proportions)
 
 # Data Visualization
 
 ```{r session_info}
-session_info()
+sessionInfo()
 ```
