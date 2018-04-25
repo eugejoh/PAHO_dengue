@@ -86,9 +86,37 @@ d_fat <- d.list[[2]] #case fatality data
 
 ## Processing
 conversion of object classes, any cleaning/processing steps
+```{r change_names}
+# change names where all white space is replaced with underscore
+names(d_epiwk) <- gsub("\\s","_",names(d_epiwk))
+```
+
+```{r select_var}
+# select relevant columns/variables
+epiwk <- d_epiwk %>% #select columns of interest
+  select(EW,Year, #dates
+         Country,PAHO_Code,PAHO_Code_Num,ISO3166Alpha2,ISO3166Alpha3,Iso3166,Region, #locations
+         Deaths,Lab_Confirm,Severe_Dengue,Suspected,Serotype,Type) %>% #case info
+  arrange(Year,EW) #arrange by Year and EW
+```
 
 # Exploration
 reporting descriptives (counts, proportions)
+
+```{r na_vals}
+# using lapply
+lapply(epiwk, function(x) sum(is.na(x))) %>% 
+  unlist() %>% data.frame(missing_values = .) %>% 
+  mutate(name = rownames(.)) %>% 
+  mutate(percent_missing = round(missing_values/nrow(.),1)) %>%
+  select(name,missing_values,percent_missing)
+
+# using purr::map()
+purrr::map_df(epiwk,~sum(is.na(.))) %>% gather(key = name,value = missing_values) %>%
+  mutate(percent_missing = round(missing_values/nrow(.),1))
+
+```
+
 
 # Data Visualization
 

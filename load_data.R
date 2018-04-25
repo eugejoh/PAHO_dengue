@@ -10,6 +10,7 @@
 list.of.packages <- c("sf","sp","rgdal","maptools","rgeos","raster","ggmap","leaflet","ggmap", #mapping
                       "readr","readxl", #data import
                       "lubridate","tidyr","plyr","dplyr","data.table", "forcats", #data wrangling
+                      "purrr", #programming
                       "ggplot2","scales","grid","gridExtra", #data viz
                       "viridis","RColorBrewer","ochRe", #colour palette
                       "xts","forecast","zoo", #time series
