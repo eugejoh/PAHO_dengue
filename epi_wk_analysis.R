@@ -17,6 +17,9 @@ epiwk <- d_epiwk %>% #select columns of interest
          Deaths,Lab_Confirm,Severe_Dengue,Suspected,Serotype,Type) %>% #case info
   arrange(Year,EW) #arrange by Year and EW
 
+# remove all rows with 2018 (incomplete data)
+epiwk <- epiwk %>% filter(Year != 2018)
+
 epiwk %>% count(Year,PAHO_Code) %>% arrange(desc(n))
 
 epiwk %>% filter(PAHO_Code == "BRA")
@@ -30,7 +33,21 @@ lapply(epiwk, function(x) sum(is.na(x))) %>%
 purrr::map_df(epiwk,~sum(is.na(.))) %>% gather(key = name,value = missing_values) %>%
   mutate(percent_missing = round(missing_values/nrow(.),1))
 
-epiwk
+unique(epiwk$Country)
+length(unique(epiwk$Country))
+epiwk_count <- epiwk %>% group_by(Year,EW) %>% count() %>%
+  mutate(missing_country = n/length(unique(epiwk$Country))) %>% data.frame
+
+ggplot(epiwk_count, aes(x=EW,y=missing_country,col=as.factor(Year))) +
+  geom_path() + geom_point(stroke = 0.5) +
+  labs(title = "Dengue Reporting to PAHO by Year",
+       subtitle = "2014-2017",
+       y = "Reporting Proportion (non-missing)", x = "Epidemiological Week Number") +
+  scale_colour_brewer(guide_legend(title = "Year"), type = "seq", palette = 1,direction = 1) +
+  theme_dark()
+
+epiwk %>% group_by(Country,Year,EW) %>% count() %>% mutate(error = if_else(n != 1, "not 1", "okay")) %>% 
+  filter(error == "not 1") %>% data.frame
 
 ggplot(data = epiwk %>% filter(PAHO_Code == "BRA")) +
   geom_jitter(aes(x=Year,y=Suspected,col=EW))
