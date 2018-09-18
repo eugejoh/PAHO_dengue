@@ -56,7 +56,7 @@ ggplot(data = epiwk %>% filter(PAHO_Code == "BRA"),
        aes(x=EW,y=Severe_Dengue,col=(Year))) +
   geom_point()
 
-  # add variable that corresponds with epi week per year
+# add variable that corresponds with epi week per year
 table(d_epiwk$Year)
 table(d_epiwk$EW)
 

@@ -31,3 +31,4 @@ R.utils
 wrapr
 here
 devtools
+bindrcpp
