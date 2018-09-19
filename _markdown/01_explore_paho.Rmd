@@ -118,25 +118,6 @@ for (i in seq_along(cat_list)) {
 ```
 
 
-```{r}
-data("iris","airquality","mtcars")
-my_list <- list(iris,airquality,mtcars)
-```
-
-```{r}
-for (i in seq_along(my_list)) {
-  
-  cat('#', names(cat_list)[i], '\n')
-  cat('```{r}', '\n')
-  
-  cat(')
-  
-  cat('\n')
-  
-  cat('```', '\n')
-  
-}
-```
 
 
 
