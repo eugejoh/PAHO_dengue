@@ -1,0 +1,27 @@
+---
+title: "test"
+author: "Eugene Joh"
+date: "September 19, 2018"
+output: html_document
+---
+
+```{r data}
+data("iris","airquality","mtcars")
+my_list <- list(iris,airquality,mtcars)
+names(my_list) <- c("iris","airquality","mtcars")
+```
+
+```{r headers, results = 'asis'}
+for (i in seq_along(my_list)) {
+  
+  cat('#', names(my_list)[i], '\n')
+  cat('```{r}', '\n')
+  
+  cat('nrow(mylist[[i]])')
+  
+  cat('\n')
+  cat('```')
+  cat('\n')
+  
+}
+```

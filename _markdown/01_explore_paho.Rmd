@@ -1,0 +1,147 @@
+---
+title: 'Explore PAHO Data: Dengue'
+author: "Eugene Joh"
+date: "`r format(Sys.Date(),'%B %d, %Y')`"
+output: 
+   html_document:
+      theme: lumen
+      highlight: tango
+      code_folding: hide
+      toc: true
+      toc_float:
+         collapsed: false
+         smooth_scroll: true
+      toc_depth: 3
+      number_sections: false
+params:
+  i_seq: NULL
+  i_names: NULL
+  i_data: NULL
+  
+---
+
+```{r setup, include=FALSE}
+if (!require(here)) install.packages("here")
+source(here::here('01_load_packages.R'))
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.width = 9.2, fig.height = 7)
+
+invisible(lapply(list.files(here::here("_fnc"),full.names = TRUE), source))
+```
+
+<!-- REMOVE THIS CHUNK AFTER PARAMETERIZATION -->
+```{r test_param, eval = TRUE}
+if (!require(here)) install.packages("here")
+
+source(here::here('01_load_packages.R'))
+
+source(here::here('02_data_import.R'))
+```
+
+## Exploratory Data Analysis
+Exploratory data analysis (EDA) is a fundamental (but not glorified) process within in the "data science" pipeline. By conducting this step in a cognizant manner can help in understanding the structure of the data, plan effective data cleaning, and processing for the analysis portion of the workflow. A good starting point on EDA is this [R for Data Science chapter](http://r4ds.had.co.nz/exploratory-data-analysis.html). To aid the process of EDA, this **parameterized R markdown** file accepts a (relatively) "tidy" dataset and will return some high level descriptives that are core to understanding the dataset.
+
+   - Data Type of each Column
+   - Number of Missing Observations `NA`
+   - Number of Unique Values
+
+This can be easily be done by running the `glimpse` function from the `dplyr` package, but this markdown will provide some visualization to aid the understanding of the data. This will become useful when larger datasets (millions of rows and/or hundreds of columns) need to undergo some type of EDA.  
+
+After identifying the structure of the data
+
+## Data Types
+```{r data_types}
+check_data_types <- function(input, name) { # input is params$i_data
+  
+  df_dat_type <- map_df(input, typeof) %>% 
+  gather(key = "Variable", value = "Data_Type") %>% 
+  left_join(
+    map_df(input, ~sum(is.na(.))) %>% 
+      gather(key = "Variable", value = "N_Missing"),
+    by = "Variable") %>% 
+  left_join(
+    map_df(input, ~length(unique(.))) %>% 
+      gather(key = "Variable", value = "N_Unique"),
+    by = "Variable") %>% 
+  mutate(
+      N_row = nrow(input),
+      Data_File = name,
+      Variable = fct_inorder(Variable)
+    )
+}
+
+df_dat_type <- check_data_types(params$i_data, params$i_names)
+df_dat_type %>% add_kable()
+```
+
+```{r p_data_types}
+df_dat_type %>% 
+  ggplot(aes(x = factor(fct_rev(fct_inorder(Variable))), y = N_Missing, fill = Data_Type, colour = Data_Type)) +
+  geom_bar(stat='identity') + 
+  labs(x = "Variable", y = "Counts of Missing",
+       caption = paste0("Total Rows: ", df_dat_type$N_row[1])) +
+  coord_flip() +
+  facet_wrap(~Data_File, scales = "free")
+```
+
+## Summary Statistics
+
+### Continuous
+<!-- https://stackoverflow.com/questions/34594641/dplyr-summary-table-for-multiple-variables -->
+```{r cont_summ}
+tidy_summary(params$i_data) %>% add_kable()
+```
+
+
+### Categorical
+```{r cat_list}
+cat_list <- params$i_data %>% select_if(is.character) %>% 
+  map(~count(data.frame(variable=.x), variable))
+```
+
+```{r program_chunks, results = 'asis', echo = TRUE}
+for (i in seq_along(cat_list)) {
+  
+  cat('#', names(cat_list)[i], '\n')
+  cat('```{r}', '\n')
+  
+  # code here
+  eval(cat_list[i])
+  
+  cat('\n')
+  
+  cat('```', '\n')
+  
+}
+
+
+```
+
+
+```{r}
+data("iris","airquality","mtcars")
+my_list <- list(iris,airquality,mtcars)
+```
+
+```{r}
+for (i in seq_along(my_list)) {
+  
+  cat('#', names(cat_list)[i], '\n')
+  cat('```{r}', '\n')
+  
+  cat(')
+  
+  cat('\n')
+  
+  cat('```', '\n')
+  
+}
+```
+
+
+
+## Session Info
+```{r sessinfo, echo=FALSE}
+sessionInfo()
+```
+
